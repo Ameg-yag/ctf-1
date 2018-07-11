@@ -1,0 +1,11 @@
+#!/bin/bash
+
+function main()
+{
+	
+	curl http://ctf.slothparadise.com/about.php
+
+	# print "HELLO WORLD!"
+}
+
+main

